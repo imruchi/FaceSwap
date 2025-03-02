@@ -18,7 +18,6 @@ class FaceDatasetPreprocessor:
         Args:
             dataset_path: Path to the CelebA dataset
             num_samples: Number of samples to use (default: 2000)
-            seed: Random seed for reproducibility
         """
         self.dataset_path = dataset_path
         self.num_samples = num_samples
