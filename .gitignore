@@ -1,0 +1,14 @@
+# Exclude virtual environment
+venv/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+__pycache__/
+
+# Jupyter Notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# Other OS or editor-specific files
+.DS_Store
+
+data/celeba/
