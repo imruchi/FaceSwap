@@ -1,35 +1,45 @@
+# File: models/diffusionModel.py
+
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from diffusers import UNet2DModel
 
-class SimpleDiffusionModel(nn.Module):
-    def __init__(self, in_channels=3, hidden_channels=64):
+class DiffusionUNet(nn.Module):
+    """
+    Wraps the UNet2DModel from Hugging Face diffusers,
+    which includes attention blocks in the down/up sampling steps.
+    """
+    def __init__(self, image_size=256, in_channels=3, out_channels=3):
+        super().__init__()
+        self.unet = UNet2DModel(
+            sample_size=image_size,    # The target image resolution
+            in_channels=in_channels,   # Number of input channels (3 for RGB)
+            out_channels=out_channels, # Number of output channels
+            layers_per_block=2,
+            block_out_channels=(64, 128, 128, 256),
+            down_block_types=(
+                "DownBlock2D",      # A standard downsampling block
+                "DownBlock2D",
+                "AttnDownBlock2D",  # Downsampling block with spatial attention
+                "AttnDownBlock2D",
+            ),
+            up_block_types=(
+                "AttnUpBlock2D",    # Upsampling block with spatial attention
+                "AttnUpBlock2D",
+                "UpBlock2D",
+                "UpBlock2D",
+            ),
+        )
+
+    def forward(self, x, timestep):
         """
-        Initialize a simple CNN-based diffusion model.
+        Forward pass through the U-Net with attention.
         
         Args:
-            in_channels: Number of input channels (default is 3 for RGB images)
-            hidden_channels: Number of hidden channels in the network
-        """
-        super(SimpleDiffusionModel, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, hidden_channels, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(hidden_channels, hidden_channels, kernel_size=3, stride=1, padding=1)
-        self.conv3 = nn.Conv2d(hidden_channels, hidden_channels, kernel_size=3, stride=1, padding=1)
-        self.conv4 = nn.Conv2d(hidden_channels, in_channels, kernel_size=3, stride=1, padding=1)
-        self.relu = nn.ReLU()
-
-    def forward(self, x):
-        """
-        Forward pass of the diffusion model.
-        
-        Args:
-            x: Input image tensor of shape (batch, 3, 256, 256)
+            x (torch.Tensor): Noisy input images of shape (B, C, H, W).
+            timestep (torch.LongTensor): Diffusion timesteps of shape (B,).
             
         Returns:
-            Tensor of the same shape as input representing predicted noise.
+            torch.Tensor: The predicted noise (same shape as x).
         """
-        out = self.relu(self.conv1(x))
-        out = self.relu(self.conv2(out))
-        out = self.relu(self.conv3(out))
-        out = self.conv4(out)
-        return out
+        return self.unet(x, timestep).sample
