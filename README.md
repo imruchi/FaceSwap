@@ -7,7 +7,7 @@ Diffusion models offer stable training and high-quality synthesis, addressing co
 
 ## **Data Acquisition**
 ### **Primary Dataset**
-We used the **CelebA/CelebA-HQ** dataset, a large collection of aligned face images with diverse identities, ideal for training a face swap model. More details on the dataset can be found [here](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).  
+We used the **CelebA/CelebA-HQ** dataset, a large collection of aligned face images with diverse identities, and it's ideal for training a face swap model. More details on the dataset can be found [here](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).  
 
 Since the full dataset consists of **200k images**, we will use a **small subset** depending on compute resources.  
 
