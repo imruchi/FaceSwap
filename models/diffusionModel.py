@@ -1,43 +1,93 @@
 import torch
 import torch.nn as nn
-from diffusers import UNet2DModel
+import torch.nn.functional as F
 
-class DiffusionUNet(nn.Module):
+class DiffusionModel(nn.Module):
     """
-    Wraps the UNet2DModel from Hugging Face diffusers,
-    which includes attention blocks in the down/up sampling steps.
+    Diffusion model for generating face images.
     """
-    def __init__(self, image_size=256, in_channels=3, out_channels=3):
-        super().__init__()
-        self.unet = UNet2DModel(
-            sample_size=image_size,    # Target image resolution
-            in_channels=in_channels,   # Input channels (3 for RGB)
-            out_channels=out_channels, # Output channels
-            layers_per_block=2,
-            block_out_channels=(64, 128, 128, 256),
-            down_block_types=(
-                "DownBlock2D",      # Standard downsampling block
-                "DownBlock2D",
-                "AttnDownBlock2D",  # Downsampling block with self-attention
-                "AttnDownBlock2D",
-            ),
-            up_block_types=(
-                "AttnUpBlock2D",    # Upsampling block with self-attention
-                "AttnUpBlock2D",
-                "UpBlock2D",
-                "UpBlock2D",
-            ),
-        )
-
-    def forward(self, x, timestep):
+    def __init__(self, unet_model, timesteps=1000, beta_start=1e-4, beta_end=0.02):
         """
-        Forward pass through the U-Net.
+        Initialize the diffusion model.
         
         Args:
-            x (torch.Tensor): Noisy input images (B, C, H, W)
-            timestep (torch.LongTensor): Diffusion timesteps (B,)
-        
-        Returns:
-            torch.Tensor: Predicted noise (same shape as x)
+            unet_model (nn.Module): UNet model for noise prediction
+            timesteps (int): Number of diffusion timesteps
+            beta_start (float): Starting noise schedule value
+            beta_end (float): Ending noise schedule value
         """
-        return self.unet(x, timestep).sample
+        super().__init__()
+        # Initialize model and noise schedule parameters
+        pass
+        
+    def forward(self, x, t):
+        """
+        Forward pass through the diffusion model.
+        
+        Args:
+            x (torch.Tensor): Input image tensor
+            t (torch.Tensor): Timestep tensor
+            
+        Returns:
+            torch.Tensor: Predicted noise
+        """
+        # Call UNet model to predict noise
+        pass
+        
+    def q_sample(self, x_start, t, noise=None):
+        """
+        Sample from the forward diffusion process q(x_t | x_0).
+        
+        Args:
+            x_start (torch.Tensor): Starting clean image
+            t (torch.Tensor): Timestep tensor
+            noise (torch.Tensor, optional): Noise to add
+            
+        Returns:
+            torch.Tensor: Noisy image at timestep t
+        """
+        # Forward diffusion process - add noise according to schedule
+        pass
+        
+    def p_sample(self, x, t, t_index):
+        """
+        Sample from the reverse diffusion process p(x_{t-1} | x_t).
+        
+        Args:
+            x (torch.Tensor): Current noisy image
+            t (torch.Tensor): Current timestep tensor
+            t_index (int): Timestep index
+            
+        Returns:
+            torch.Tensor: Less noisy image at timestep t-1
+        """
+        # Predict noise and reverse diffusion step
+        pass
+        
+    def p_sample_loop(self, shape, noise=None):
+        """
+        Run the reverse diffusion process from pure noise to an image.
+        
+        Args:
+            shape (tuple): Shape of the output image
+            noise (torch.Tensor, optional): Initial noise
+            
+        Returns:
+            torch.Tensor: Generated image
+        """
+        # Iteratively denoise from random noise to image
+        pass
+        
+    def sample(self, batch_size=16, img_size=256):
+        """
+        Generate a batch of sample images.
+        
+        Args:
+            batch_size (int): Number of images to generate
+            img_size (int): Size of the generated images
+            
+        Returns:
+            torch.Tensor: Generated images
+        """
+        # Convenience method to generate samples
+        pass
