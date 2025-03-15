@@ -4,7 +4,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from torchvision.datasets import CelebA
 from torch.utils.data import Subset, random_split, DataLoader
-from models.diffusionModel import DiffusionUNet
+# from models.diffusionModel import DiffusionUNet
 from utils.training import train_epoch, validate_epoch
 from torchvision import transforms
 
